@@ -44,7 +44,7 @@ Each item contains a type identifier and type-specific data:
 }
 ```
 
-Some older templates use legacy identifiers such as `Bitem` and `Bloc`.
+Some older templates may use legacy identifiers such as `Bitem` and `Bloc`.
 
 ## Named values
 
