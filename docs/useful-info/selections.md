@@ -22,9 +22,9 @@ Player, Entity, and related condition blocks can bypass the selection when their
 
 | Block | Default selection | Non-empty explicit selection | Empty selection | Selectionless thread |
 | --- | --- | --- | --- | --- |
-| Player Action / Entity Action | Runs once for the Default target | Runs once for every selected target | Does not run | Does not run; Cannot run without a target |
+| Player Action / Entity Action | Runs once for the Default target | Runs once for every selected target | Does not run | Does not run |
 | Set Variable | Runs once | Runs once for every selected target | Does not run | Runs once |
-| If Player / If Entity | Tests the Default target | Tests all selected targets and passes if at least one matches | Does not pass | Does not pass; Cannot test without a target |
+| If Player / If Entity | Tests the Default target | Tests all selected targets and passes if at least one matches | Does not pass | Does not pass |
 | Select Object | Creates a selection | Replaces, changes, or resets the selection | Replaces, changes, or resets the selection | Creates a selection |
 | Call Function | Runs once and passes on the default selection | Runs once and passes on the selection | Runs once and passes on the empty selection | Runs once and passes on the selectionless state |
 | Start Process | Uses its configured target mode | Uses its configured target mode | With Current or No Targets can run once; For Each starts none | With Current or No Targets can run once; For Each starts none |
@@ -36,15 +36,15 @@ It makes selection-driven actions run zero times and prevents Current Selection 
 
 ## Start Process target modes
 
-| Target mode | Selection behavior |
-| --- | --- |
-| With Current Targets | Copies the current selection and available event targets, such as Default or Victim |
-| With Current Selection | Copies the explicit selection without carrying event targets |
-| No Targets | Starts one selectionless process |
-| For Each in Selection | Starts one process per selected target and makes that target the process's Default |
+| Target mode | Targets passed to the process | Processes started | Process lifetime |
+| --- | --- | --- | --- |
+| With Current Targets | The current event targets, but not the explicit selection | One if a Default target exists; otherwise none | Runs only while its Default target exists |
+| With Current Selection | The explicit selection, but no event targets | One, even if the selection is empty | Continues even if its selected targets cease to exist or the selection is reset |
+| No Targets | No selection or event targets | One | Continues without a target |
+| For Each in Selection | One selected target as the process's Default | One per selected target; none if the selection is empty | Runs only while its Default target exists |
 
-For Each in Selection starts no processes when the selection is empty.  
-No Targets still starts one process because it intentionally removes the selection instead of iterating it.
+Processes started With Current Targets or For Each in Selection are tied to their Default target.  
+If that player leaves the plot or that entity ceases to exist, its process stops as well.
 
 ## Conditions do not filter the selection
 
@@ -106,9 +106,15 @@ An event target is only available when the current event provides it.
 | --- | --- |
 | All Players | Every player currently on the plot |
 | Last Entity | The most recently spawned entity |
+| Current Selection | The currently selected targets |
 
 Select Object provides separate actions for selecting all players or the last-spawned entity.  
 Select All Entities and Select All Mobs are also Select Object actions, not additional target settings.
+
+The Current Selection target uses the active explicit selection.  
+When none is active, it falls back to the event's Default target.  
+This is the same fallback used by [`%selected` and `%uuid`](percent-codes.md#target-codes).  
+A selectionless thread has no Default target to fall back to.
 
 Some Entity Actions can fall back to a victim or the last spawned entity when no applicable Default target exists.  
 Because fallback behavior depends on the event and action, test the exact combination before relying on it.
