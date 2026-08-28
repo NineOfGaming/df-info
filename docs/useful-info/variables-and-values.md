@@ -1,21 +1,17 @@
 # Variables and values
 
-## Choose the narrowest useful scope
+## Variable scopes
 
-Variable scope controls lifetime and visibility:
-
-| Scope | Lifetime and visibility | Common use |
+| Scope | Visible to | Lasts until |
 | --- | --- | --- |
-| Game | Shared plot state; cleared after everyone leaves | Active matches, caches, temporary player state |
-| Save | Persistent across sessions | Progress, settings, long-term player data |
-| Local | Limited to one event thread and shared with called functions | Temporary calculations used across a call chain |
-| Line | Limited to the current code line or function invocation | Scratch values and function parameters |
+| Line | The current code line or function invocation | The line or invocation ends |
+| Local | The current thread and functions it calls | The thread ends |
+| Game | Every thread on the plot | Everyone leaves the plot |
+| Save | Every thread on the plot | The variable is deleted |
 
-Line variables do not cross a function boundary, which makes them safer for temporary names reused by multiple functions.  
+Choose the narrowest useful scope that covers where and how long the value is needed.
+
 See [Functions and processes](code-practices-and-quirks.md#functions-and-processes) for Local-variable inheritance when starting a process.
-
-Game and Save variables share a namespace.  
-If a Save variable already exists, attempting to set a Game variable with the same name can modify the persistent value instead, so avoid ambiguous names across these two scopes.
 
 ## Purge temporary player state
 
