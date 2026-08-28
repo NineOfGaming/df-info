@@ -35,6 +35,9 @@ Tooling should decode base64 and decompress gzip together instead of exposing ra
 
 ## Decoded data
 
+Throughout these docs, fields marked with `?` are optional.  
+Every other field is required and must not be omitted, even when it has no value; DiamondFire cannot parse a template with a missing required field.
+
 The decoded JSON object contains a `blocks` array:
 
 ```ts
