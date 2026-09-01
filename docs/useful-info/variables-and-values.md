@@ -11,6 +11,8 @@
 
 Choose the narrowest useful scope that covers where and how long the value is needed.
 
+When passing values between functions or processes, passing Line variables as parameters is usually better than using Local variables.
+
 See [Functions and processes](code-practices-and-quirks.md#functions-and-processes) for Local-variable inheritance when starting a process.
 
 ## Purge temporary player state
