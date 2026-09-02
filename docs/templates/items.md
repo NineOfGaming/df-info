@@ -49,7 +49,7 @@ Some older templates may use legacy identifiers such as `Bitem` and `Bloc`.
 ## Named values
 
 Numbers, Strings, and Text values share a `name` field.  
-Numbers use a string because they can include percent codes.
+Numbers use a string because they can include percent expressions.
 
 ```ts
 {

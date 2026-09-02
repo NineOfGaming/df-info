@@ -155,4 +155,4 @@ Function and process blocks store the user-entered function or process name in `
 
 The `data` field can contain color codes, unusually long strings, and characters that cannot normally be entered through the in-game interface.
 
-Call Function and Start Process names can contain [percent codes](../useful-info/percent-codes.md#dynamic-function-and-process-names) that resolve the target code line at runtime.
+Call Function and Start Process names can contain [percent expressions](../useful-info/percent-expressions.md#dynamic-function-and-process-names) that resolve the target code line at runtime.

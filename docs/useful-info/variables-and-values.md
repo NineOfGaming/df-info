@@ -40,9 +40,9 @@ The stored identifier can then be used in another variable name:
 Use a stable identifier for persistent data.  
 UUIDs are generally safer than usernames because usernames can change.
 
-## Use percent codes for simple intermediate values
+## Use percent expressions for simple intermediate values
 
-Percent codes such as `%math`, `%index`, `%entry`, and `%var` can replace Set Variable actions whose only purpose is to calculate or retrieve a value used once.
+Percent expressions such as `%math`, `%index`, `%entry`, and `%var` can replace Set Variable actions whose only purpose is to calculate or retrieve a value used once.
 
 This can reduce code size and unnecessary actions, but compactness is not the only goal.  
 Use an intermediate variable when it makes a complicated expression easier to inspect, reuse, or debug.
@@ -50,7 +50,7 @@ Use an intermediate variable when it makes a complicated expression easier to in
 Avoiding an extra Set Variable block also avoids parsing and executing that block and its arguments, slightly reducing CPU overhead.  
 The difference is usually minimal, so readability should remain the deciding factor.
 
-See [Percent codes and expressions](percent-codes.md) for syntax, built-in expressions, target codes, and nesting.
+See [Percent expressions ](percent-expressions.md) for syntax, built-in expressions, target codes, and nesting.
 
 ## Number precision
 

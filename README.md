@@ -15,7 +15,7 @@ This repository collects reference information and exported metadata for
 - [`docs/templates/`](docs/templates/) explains DiamondFire code-template  
   encoding and the decoded block and item formats.
 - [`docs/useful-info/`](docs/useful-info/) contains practical notes about  
-  variables, selections, percent codes, limits, entity references, and coding  
+  variables, selections, percent expressions, limits, entity references, and coding  
   quirks.
 
 ## Command-line tools

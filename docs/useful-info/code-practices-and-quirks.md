@@ -42,7 +42,7 @@ If a block may receive several types, normalize the input to one type or use sep
 
 ## Dynamic function-call signatures
 
-A Call Function block whose name contains [percent codes](percent-codes.md#dynamic-function-and-process-names) can call different functions dynamically.  
+A Call Function block whose name contains [percent expressions](percent-expressions.md#dynamic-function-and-process-names) can call different functions dynamically.  
 The placed call block can remember the parameter signature of the first function it calls during a session, including parameter names, and reuse that signature for later calls.
 
 All functions reachable from one dynamic Call Function block should therefore use compatible parameters.  

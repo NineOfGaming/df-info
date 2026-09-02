@@ -1,6 +1,6 @@
-# Percent codes and expressions
+# Percent expressions 
 
-Percent codes are placeholders that DiamondFire evaluates while code is running.  
+Percent expressions are placeholders that DiamondFire evaluates while code is running.  
 They can retrieve values, perform small calculations, or insert a target from the current code context.
 
 There are two common forms:
@@ -8,7 +8,7 @@ There are two common forms:
 - Expression codes use arguments inside parentheses, such as `%var(score)` or `%math(2+3)`.
 - Target codes have no arguments, such as `%default` or `%victim`.
 
-Percent codes can be nested inside one another.
+Percent expressions can be nested inside one another.
 
 ## Expression codes
 
@@ -36,7 +36,7 @@ The inner expression produces `15`, so the outer expression produces `16`.
 Normal grouping parentheses do not work, so `%math(1+(5*3))` is invalid.
 
 `%math` is supported by Number values.  
-Other percent codes can be nested inside it when they resolve to numbers:
+Other percent expressions can be nested inside it when they resolve to numbers:
 
 ```text
 %math(%var(score)+5)
@@ -71,7 +71,7 @@ Codes that require Default may also fail or produce an unexpected result in a [s
 
 ## Nesting
 
-DiamondFire resolves nested percent codes as part of the surrounding expression.
+DiamondFire resolves nested percent expressions as part of the surrounding expression.
 
 For example, a list and its index can both come from variables:
 
@@ -90,7 +90,7 @@ An intermediate variable is usually better when the expression is difficult to i
 
 ## Dynamic variable names
 
-Percent codes can appear inside variable names:
+Percent expressions can appear inside variable names:
 
 ```text
 %default.opponent
@@ -138,18 +138,18 @@ Start Process match.%var(match_state)
 The resolved name must exactly match an existing function or process.  
 Functions reached through one dynamic Call Function block should also use compatible parameters because of its [signature-caching behavior](code-practices-and-quirks.md#dynamic-function-call-signatures).
 
-## Where percent codes are evaluated
+## Where percent expressions are evaluated
 
-Percent codes are commonly used in String and Text values, Number expressions, variable names, and dynamic function or process names.  
-The exact behavior depends on the value type and the action consuming it; not every text-bearing field evaluates percent codes.
+Percent expressions are commonly used in String and Text values, Number expressions, variable names, and dynamic function or process names.  
+The exact behavior depends on the value type and the action consuming it; not every text-bearing field evaluates percent expressions.
 
-Percent codes are separate from MiniMessage formatting.  
-MiniMessage controls presentation, while percent codes insert or calculate values.  
+Percent expressions are separate from MiniMessage formatting.  
+MiniMessage controls presentation, while percent expressions insert or calculate values.  
 
-Percent codes cannot be used directly inside a [Styled Text value's MiniMessage tags](../templates/items.md#styled-text).  
+Percent expressions cannot be used directly inside a [Styled Text value's MiniMessage tags](../templates/items.md#styled-text).  
 For example, a percent expression cannot dynamically provide a tag name or argument.
 
-To generate dynamic MiniMessage tags, put the MiniMessage expression in a String so its percent codes can be evaluated, then convert it with Set Variable: Parse MiniMessage Expression:
+To generate dynamic MiniMessage tags, put the MiniMessage expression in a String so its percent expressions can be evaluated, then convert it with Set Variable: Parse MiniMessage Expression:
 
 ```text
 <color:%var(color)>Hello</color>

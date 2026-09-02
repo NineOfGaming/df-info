@@ -113,7 +113,7 @@ Select All Entities and Select All Mobs are also Select Object actions, not addi
 
 The Current Selection target uses the active explicit selection.  
 When none is active, it falls back to the event's Default target.  
-This is the same fallback used by [`%selected` and `%uuid`](percent-codes.md#target-codes).  
+This is the same fallback used by [`%selected` and `%uuid`](percent-expressions.md#target-codes).  
 A selectionless thread has no Default target to fall back to.
 
 Some Entity Actions can fall back to a victim or the last spawned entity when no applicable Default target exists.  
