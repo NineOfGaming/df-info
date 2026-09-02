@@ -63,17 +63,7 @@ Numbers use a string because they can include percent expressions.
 ### Styled text
 
 `comp` is DiamondFire's Styled Text value.  
-Its `name` is formatted using [MiniMessage](https://docs.papermc.io/adventure/minimessage/format/):
-
-```ts
-{
-  id: "comp";
-  data: {
-    name: "<red><bold>Hello</bold></red>";
-  };
-}
-```
-
+Its `name` is formatted using [MiniMessage](https://docs.papermc.io/adventure/minimessage/format/).  
 `txt` is an ordinary String value and does not use MiniMessage.  
 
 ### Variables
