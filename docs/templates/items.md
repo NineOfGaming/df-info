@@ -255,7 +255,7 @@ Particle types expose different optional fields inside `data.data`:
 
 ## Block tag
 
-Block tags occupy slots at the right side of an action chest:
+Block tags occupy slots at the bottom right side of an action chest:
 
 ```ts
 {
