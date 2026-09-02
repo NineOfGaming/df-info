@@ -5,14 +5,14 @@ They can retrieve values, perform small calculations, or insert a target from th
 
 There are two common forms:
 
-- Expression codes use arguments inside parentheses, such as `%var(score)` or `%math(2+3)`.
-- Target codes have no arguments, such as `%default` or `%victim`.
+- Expressions use arguments inside parentheses, such as `%var(score)` or `%math(2+3)`.
+- Target expressions have no arguments, such as `%default` or `%victim`.
 
 Percent expressions can be nested inside one another.
 
-## Expression codes
+## Expressions
 
-| Code | Result |
+| Expression | Result |
 | --- | --- |
 | `%random(min,max)` | A random integer between `min` and `max` |
 | `%round(number)` | `number` rounded down to an integer |
@@ -42,11 +42,11 @@ Other percent expressions can be nested inside it when they resolve to numbers:
 %math(%var(score)+5)
 ```
 
-## Target codes
+## Target expressions
 
-Target codes depend on the current event, target, or selection:
+Target expressions depend on the current event, target, or selection:
 
-| Code | Result |
+| Expressions | Result |
 | --- | --- |
 | `%default` | The name of the Default player or entity |
 | `%defaultuuid` | The UUID of the Default player or entity |
@@ -63,8 +63,8 @@ Target codes depend on the current event, target, or selection:
 | `%projectile` | The projectile in a projectile event |
 | `%projectileuuid` | The UUID of the projectile in a projectile event |
 
-Event-specific codes only work when that target exists.  
-Codes that require Default may also fail or produce an unexpected result in a [selectionless thread](selections.md#selection-states).
+Event-specific expressions only work when that target exists.  
+Expressions that require Default may also fail or produce an unexpected result in a [selectionless thread](selections.md#selection-states).
 
 `%default` and `%defaultuuid` always refer to Default.  
 `%selected` and `%uuid` instead follow selection-based execution, resolving the current target's name and UUID respectively, and fall back to Default when no selection is active.
@@ -104,7 +104,7 @@ The name is evaluated when the variable is used, allowing one placed variable it
 %var(%default.opponent).health
 ```
 
-Use a UUID code rather than a name code for persistent player data because usernames can change.
+Use a UUID expression rather than a name expression for persistent player data because usernames can change.
 
 ## Dynamic function and process names
 
