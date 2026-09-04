@@ -23,7 +23,7 @@ This repository collects reference information and exported metadata for
 The [`tools/`](tools/) directory includes Python scripts for exploring the actiondump and working with code templates.  
 They have no third-party dependencies; Python 3.10 or newer is recommended.
 
-Search the actiondump:
+### Search the actiondump:
 
 ```sh
 python tools/actiondump.py collections
@@ -44,7 +44,7 @@ Pass `--dump` to any subcommand to select another file, for example:
 python tools/actiondump.py query Teleport --dump actiondump/actiondump_plain.json
 ```
 
-Decode, validate, and re-encode code templates:
+### Decode, validate, and re-encode code templates:
 
 ```sh
 python tools/template.py decode encoded-template.txt --output template.json
