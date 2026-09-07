@@ -47,3 +47,40 @@ The placed call block can remember the parameter signature of the first function
 
 All functions reachable from one dynamic Call Function block should therefore use compatible parameters.  
 If their signatures differ, use separate call blocks or a wrapper function with one stable interface.
+
+## Player death and respawn quirks
+
+Player death events are usually adequate for simple games, but the normal death and respawn sequence can reset or invalidate more player and plot state than expected.  
+Complex games should not assume that state survives this sequence unchanged.
+
+Known issues include:
+
+- During the death or respawn transition, the player can briefly be moved far outside the plot.  
+This can temporarily unload plot chunks, cause entities in those chunks to despawn, and remove client-side ghost blocks for that player.
+- Player-specific settings, including the world border, can be reset.
+- While a player remains on the death screen with Keep Inventory enabled, actions that get or set their inventory do not work reliably.
+
+This is not an exhaustive list; other state and behavior may also be affected.
+
+### Restoring state after a normal death
+
+Treat affected state as invalid after every death.  
+Once the player respawns, reapply anything that may have been reset or removed, or check and restore individual pieces of state when they can be inspected reliably.  
+This can include recreating despawned entities, resending ghost blocks, and reapplying settings such as the world border.
+
+Inventory handling requires additional care.  
+Before the inventory becomes unavailable, copy it into temporary per-player state that lasts until respawn.  
+While the player is dead, treat the cached inventory as authoritative:
+
+- Read from the cached inventory instead of the player's inventory.
+- Apply inventory changes to the cached inventory.
+- If the player leaves from the death screen, save the cached inventory instead of reading their unavailable inventory.
+- After the player respawns, overwrite their inventory with the cached version and remove the temporary state.
+
+Enable Instant Respawn unless the game intentionally uses the death screen.  
+Avoiding the screen mitigates some of the issues and shortens the time in which inventory cannot be accessed, but it does not prevent every death-related issue.
+
+### Replacing the death system
+
+Alternatively, cancel each relevant player death event and implement a custom death and respawn system.  
+This requires more code, but gives the game explicit control over which state changes and when the player is considered dead or respawned.
