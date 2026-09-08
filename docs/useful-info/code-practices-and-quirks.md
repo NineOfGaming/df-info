@@ -48,6 +48,44 @@ The placed call block can remember the parameter signature of the first function
 All functions reachable from one dynamic Call Function block should therefore use compatible parameters.  
 If their signatures differ, use separate call blocks or a wrapper function with one stable interface.
 
+## Indirect event-state reads across waits
+
+Dedicated Event Values and event-specific conditions are not affected by this quirk.  
+However, an event line can begin before DiamondFire applies the state change that caused the event.  
+An ordinary game value that indirectly reads the affected state can therefore return different results before and after the line yields, even though both reads belong to the same event.
+
+For example, in `Player Event: Movement Key Change`:
+
+- `If Player: Event Movement Key Equals` correctly identifies which key changed and whether it was pressed or released.  
+- `Pressed Movement Keys`, which is an ordinary Informational Value, returns the player's key state from before the change when read immediately.  
+- After a `Control: Wait` with a duration of `0`, `Pressed Movement Keys` returns the state from after the change.
+
+Use `Pressed Movement Keys` on the desired side of the wait when the complete old or new key state is needed.
+
+Similar timing differences can occur when other events change player, entity, inventory, block, or world state and an ordinary game value reads that state indirectly.  
+Do not assume that every value read on an event line represents the same point in the event.  
+Store values before yielding if the pre-event state is needed.
+
+Some dedicated Event Values expose both states explicitly.  
+Examples include `Event Clicked Slot Item` and `Event Clicked Slot New Item`, `Event Vault State` and `Event New Vault State`, and `Event Redstone Current Strength` and `Event New Redstone Current Strength`.  
+These values are part of the event payload and are not examples of the indirect-read quirk.  
+Prefer these explicit pairs when they are available instead of relying on wait timing.
+
+## Wait is an execution boundary
+
+A `Control: Wait` with a duration of `0` is **not** a no-op.  
+It yields and resumes the line, which can change the state visible to later blocks even when no positive delay was requested.  
+Crossing any `Control: Wait` also ends the window in which cancellation can be changed, `Game Action: Cancel Event` and `Game Action: Uncancel Event` cannot be used after a `Control: Wait`.
+
+The three forms below should not be treated as interchangeable:
+
+- `Control: Wait` with a duration of `0`;
+- `Control: Wait` with no duration item;
+- `Control: Wait` with an explicit duration of `1`.
+
+`Control: Wait` documents `1` as the default duration, but an omitted duration has been observed to behave slightly differently from an explicit `1`.  
+When the exact execution phase matters, supply the intended duration explicitly and test the surrounding state reads rather than relying on the displayed default.
+
 ## Player death and respawn quirks
 
 Player death events are usually adequate for simple games, but the normal death and respawn sequence can reset or invalidate more player and plot state than expected.  
