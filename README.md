@@ -29,13 +29,15 @@ They have no third-party dependencies; Python 3.10 or newer is recommended.
 python tools/actiondump.py collections
 python tools/actiondump.py query Teleport --collection actions
 python tools/actiondump.py inspect actions Teleport --codeblock "PLAYER ACTION"
+python tools/actiondump.py query "Movement Key Change" --collection actions --inspect
 ```
 
 Queries search names, IDs, aliases, and display names by default.  
 Add `--all-fields` to include descriptions and nested metadata,  
 `--full` to include complete matching records, or `--compact` for single-line JSON.  
-`inspect` also accepts the collection index returned by a query, for example  
-`inspect actions --index 1070`.
+Add `--inspect` to return the complete record directly when exactly one query result matches.
+The `inspect` command always returns a complete record and accepts `--full` as an optional no-op for consistency.
+It also accepts the collection index returned by a query, for example `inspect actions --index 1070`.
 
 The MiniMessage actiondump is used by default.  
 Pass `--dump` to any subcommand to select another file, for example:

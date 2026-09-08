@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any, Iterable
@@ -30,6 +31,10 @@ IDENTITY_FIELDS: dict[str, tuple[str, ...]] = {
     "cosmetics": ("id", "name", "icon.name"),
     "shops": ("id", "name", "icon.name"),
 }
+
+FORMATTING_RE = re.compile(
+    r"<[^<>]+>|(?:&|\N{SECTION SIGN})[0-9A-FK-ORa-fk-or]"
+)
 
 
 class ActiondumpError(Exception):
@@ -122,14 +127,14 @@ def _identity_summary(collection: str, record: Any) -> dict[str, Any]:
 
 
 def _matches(candidate: str, needle: str, exact: bool) -> bool:
-    candidate_folded = candidate.casefold()
-    needle_folded = needle.casefold()
+    candidate_folded = FORMATTING_RE.sub("", candidate).casefold()
+    needle_folded = FORMATTING_RE.sub("", needle).casefold()
     return candidate_folded == needle_folded if exact else needle_folded in candidate_folded
 
 
 def _match_score(candidate: str, needle: str) -> int:
-    candidate_folded = candidate.casefold()
-    needle_folded = needle.casefold()
+    candidate_folded = FORMATTING_RE.sub("", candidate).casefold()
+    needle_folded = FORMATTING_RE.sub("", needle).casefold()
     if candidate_folded == needle_folded:
         return 0
     if candidate_folded.startswith(needle_folded):
@@ -281,6 +286,40 @@ def inspect_record(
     return {"collection": collection, "index": record_index, "record": record}
 
 
+def inspect_query_match(
+    actiondump: dict[str, list[Any]], query_result: dict[str, Any]
+) -> dict[str, Any]:
+    """Return the complete record when a query has exactly one match."""
+    total = query_result["total"]
+    if total == 0:
+        raise ActiondumpError(
+            "Query did not match any records",
+            details={
+                "query": query_result["query"],
+                "searchedCollections": query_result["searchedCollections"],
+            },
+            exit_code=3,
+        )
+    if total > 1:
+        raise ActiondumpError(
+            "Query matched more than one record; refine it or inspect by index",
+            details={
+                "query": query_result["query"],
+                "matchCount": total,
+                "candidates": query_result["matches"],
+                "candidatesTruncated": query_result["truncated"],
+            },
+            exit_code=3,
+        )
+
+    match = query_result["matches"][0]
+    return inspect_record(
+        actiondump,
+        match["collection"],
+        index=match["index"],
+    )
+
+
 def _positive_int(value: str) -> int:
     parsed = int(value)
     if parsed < 1:
@@ -333,6 +372,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--full", action="store_true", help="include complete records in results"
     )
     query_parser.add_argument(
+        "--inspect",
+        action="store_true",
+        help="return the complete record when exactly one result matches",
+    )
+    query_parser.add_argument(
         "--limit", type=_positive_int, default=20, help="maximum returned matches"
     )
     _add_output_arguments(query_parser)
@@ -349,6 +393,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--codeblock",
         help="filter duplicate actions by codeblockName (for example PLAYER ACTION)",
     )
+    inspect_parser.add_argument(
+        "--full",
+        action="store_true",
+        help="accepted for consistency; inspect always returns the complete record",
+    )
     _add_output_arguments(inspect_parser)
     return parser
 
@@ -362,7 +411,19 @@ def _emit(value: Any, *, compact: bool, stream: Any = sys.stdout) -> None:
     )
 
 
+def _configure_standard_streams() -> None:
+    """Use UTF-8 for CLI output, including redirected output on Windows."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            try:
+                reconfigure(encoding="utf-8")
+            except (OSError, ValueError):
+                pass
+
+
 def main(argv: list[str] | None = None) -> int:
+    _configure_standard_streams()
     args = build_parser().parse_args(argv)
     try:
         actiondump = load_actiondump(args.dump)
@@ -384,6 +445,8 @@ def main(argv: list[str] | None = None) -> int:
                 full=args.full,
                 limit=args.limit,
             )
+            if args.inspect:
+                output = inspect_query_match(actiondump, output)
         else:
             output = inspect_record(
                 actiondump,
