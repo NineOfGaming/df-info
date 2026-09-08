@@ -75,7 +75,7 @@ While the player is dead, treat the cached inventory as authoritative:
 - Read from the cached inventory instead of the player's inventory.
 - Apply inventory changes to the cached inventory.
 - If the player leaves from the death screen, save the cached inventory instead of reading their unavailable inventory.
-- After the player respawns, overwrite their inventory with the cached version and remove the temporary state.
+- After the player respawns, overwrite their inventory with the cached version if it was modified and remove the temporary state.
 
 Enable Instant Respawn unless the game intentionally uses the death screen.  
 Avoiding the screen mitigates some of the issues and shortens the time in which inventory cannot be accessed, but it does not prevent every death-related issue.
