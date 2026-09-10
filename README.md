@@ -35,8 +35,8 @@ python tools/actiondump.py query "Movement Key Change" --collection actions --in
 Queries search names, IDs, aliases, and display names by default.  
 Add `--all-fields` to include descriptions and nested metadata,  
 `--full` to include complete matching records, or `--compact` for single-line JSON.  
-Add `--inspect` to return the complete record directly when exactly one query result matches.
-The `inspect` command always returns a complete record and accepts `--full` as an optional no-op for consistency.
+Add `--inspect` to return the complete record directly when exactly one query result matches.  
+The `inspect` command always returns a complete record and accepts `--full` as an optional no-op for consistency.  
 It also accepts the collection index returned by a query, for example `inspect actions --index 1070`.
 
 The MiniMessage actiondump is used by default.  
