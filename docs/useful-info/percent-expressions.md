@@ -143,11 +143,31 @@ Functions reached through one dynamic Call Function block should also use compat
 Percent expressions are commonly used in String and Text values, Number expressions, variable names, and dynamic function or process names.  
 The exact behavior depends on the value type and the action consuming it; not every text-bearing field evaluates percent expressions.
 
-Percent expressions are separate from MiniMessage formatting.  
-MiniMessage controls presentation, while percent expressions insert or calculate values.  
+Percent expressions and MiniMessage formatting serve different purposes.  
+MiniMessage controls presentation, while percent expressions insert or calculate values.
 
-Percent expressions cannot be used directly inside a [Styled Text value's MiniMessage tags](../templates/items.md#styled-text).  
-For example, a percent expression cannot dynamically provide a tag name or argument.
+When DiamondFire converts a [Styled Text value](../templates/items.md#styled-text) into components, it does not substitute the results directly into the MiniMessage source.  
+Instead, it evaluates each outermost percent expression, stores the results in order, and replaces the expressions with internal interpolation tags that refer to those results.
+
+For example:
+
+```text
+Hello %default, you have %var(%default coins) coins!
+```
+
+is passed to the MiniMessage parser in a form equivalent to:
+
+```text
+Hello <#interpolate:0>, you have <#interpolate:1> coins!
+```
+
+A custom tag resolver receives the stored values and inserts them while MiniMessage parses the text.  
+MiniMessage does not parse tags inside another tag's name or arguments, so an interpolation tag cannot be resolved when a percent expression appears there.  
+For example, `<color:%var(color)>` becomes `<color:<#interpolate:0>>`, whose inner interpolation tag is not parsed.  
+This means a percent expression cannot dynamically provide a tag name or argument.
+
+The `#interpolate` tag is an internal implementation detail and should not be used directly.  
+For example, `%default <#interpolate:0>` can insert the Default target's name twice because both tags refer to the first stored result.
 
 To generate dynamic MiniMessage tags, put the MiniMessage expression in a String so its percent expressions can be evaluated, then convert it with Set Variable: Parse MiniMessage Expression:
 
