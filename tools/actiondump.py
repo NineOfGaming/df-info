@@ -46,7 +46,7 @@ class ActiondumpError(Exception):
         self.exit_code = exit_code
 
 
-def load_actiondump(path: Path) -> dict[str, list[Any]]:
+def load_actiondump(path: Path) -> dict[str, Any]:
     """Load an actiondump and check the top-level shape used by this CLI."""
     try:
         with path.open(encoding="utf-8") as handle:
@@ -59,13 +59,27 @@ def load_actiondump(path: Path) -> dict[str, list[Any]]:
     if not isinstance(data, dict):
         raise ActiondumpError("Actiondump root must be a JSON object")
 
-    invalid = [name for name, records in data.items() if not isinstance(records, list)]
+    if "versions" in data and not isinstance(data["versions"], dict):
+        raise ActiondumpError("Actiondump versions must be a JSON object")
+
+    invalid = [
+        name
+        for name, records in data.items()
+        if name != "versions" and not isinstance(records, list)
+    ]
     if invalid:
         raise ActiondumpError(
             "Every actiondump collection must be an array",
             details={"invalidCollections": invalid},
         )
     return data
+
+
+def _collection_names(actiondump: dict[str, Any]) -> list[str]:
+    """Return searchable top-level arrays, excluding metadata objects."""
+    return [
+        name for name, records in actiondump.items() if isinstance(records, list)
+    ]
 
 
 def _value_at_path(value: Any, dotted_path: str) -> Any:
@@ -143,23 +157,24 @@ def _match_score(candidate: str, needle: str) -> int:
 
 
 def _selected_collections(
-    actiondump: dict[str, list[Any]], requested: list[str] | None
+    actiondump: dict[str, Any], requested: list[str] | None
 ) -> list[str]:
+    available = _collection_names(actiondump)
     if not requested:
-        return list(actiondump)
+        return available
 
-    unknown = [name for name in requested if name not in actiondump]
+    unknown = [name for name in requested if name not in available]
     if unknown:
         raise ActiondumpError(
             "Unknown actiondump collection",
-            details={"unknown": unknown, "available": list(actiondump)},
+            details={"unknown": unknown, "available": available},
         )
     # Keep the caller's order, but do not search a repeated collection twice.
     return list(dict.fromkeys(requested))
 
 
 def query_actiondump(
-    actiondump: dict[str, list[Any]],
+    actiondump: dict[str, Any],
     term: str,
     *,
     collections: list[str] | None = None,
@@ -216,7 +231,7 @@ def query_actiondump(
 
 
 def inspect_record(
-    actiondump: dict[str, list[Any]],
+    actiondump: dict[str, Any],
     collection: str,
     *,
     key: str | None = None,
@@ -287,7 +302,7 @@ def inspect_record(
 
 
 def inspect_query_match(
-    actiondump: dict[str, list[Any]], query_result: dict[str, Any]
+    actiondump: dict[str, Any], query_result: dict[str, Any]
 ) -> dict[str, Any]:
     """Return the complete record when a query has exactly one match."""
     total = query_result["total"]
@@ -431,10 +446,12 @@ def main(argv: list[str] | None = None) -> int:
             output = {
                 "file": str(args.dump),
                 "collections": [
-                    {"name": name, "count": len(records)}
-                    for name, records in actiondump.items()
+                    {"name": name, "count": len(actiondump[name])}
+                    for name in _collection_names(actiondump)
                 ],
             }
+            if "versions" in actiondump:
+                output["versions"] = actiondump["versions"]
         elif args.command == "query":
             output = query_actiondump(
                 actiondump,

@@ -52,6 +52,8 @@ KNOWN_ITEMS = {
     "var",
     "vec",
 }
+CURRENT_ITEM_VERSIONS = {item_id: 0 for item_id in KNOWN_ITEMS}
+CURRENT_ITEM_VERSIONS.update({"part": 1, "pot": 1, "snd": 1})
 LEGACY_ITEMS = {"Bitem", "Bloc"}
 VARIABLE_SCOPES = {"saved", "unsaved", "local", "line"}
 TARGETS = {
@@ -172,6 +174,18 @@ def _require_number_field(
         _issue(errors, f"{path}.{field}", "must be a number")
 
 
+def _require_non_negative_integer_field(
+    value: dict[str, Any], field: str, path: str, errors: list[dict[str, str]]
+) -> None:
+    field_value = value.get(field)
+    if (
+        not isinstance(field_value, int)
+        or isinstance(field_value, bool)
+        or field_value < 0
+    ):
+        _issue(errors, f"{path}.{field}", "must be a non-negative integer")
+
+
 def _validate_item(
     item: Any,
     path: str,
@@ -192,6 +206,25 @@ def _validate_item(
     if item_id not in KNOWN_ITEMS:
         _issue(warnings, f"{path}.id", f"unknown item type {item_id!r}")
         return
+
+    # Items without an explicit version use the original version 0 format.
+    item_version = item_object.get("version", 0)
+    if (
+        not isinstance(item_version, int)
+        or isinstance(item_version, bool)
+        or item_version < 0
+    ):
+        _issue(errors, f"{path}.version", "must be a non-negative integer")
+        item_version = 0
+    elif item_version > CURRENT_ITEM_VERSIONS[item_id]:
+        _issue(
+            warnings,
+            f"{path}.version",
+            (
+                f"version {item_version} is newer than the supported "
+                f"version {CURRENT_ITEM_VERSIONS[item_id]} for {item_id!r}"
+            ),
+        )
 
     data = _require_object(item_object.get("data"), f"{path}.data", errors)
     if data is None:
@@ -221,10 +254,18 @@ def _validate_item(
         _require_string_field(data, "pot", f"{path}.data", errors)
         _require_number_field(data, "dur", f"{path}.data", errors)
         _require_number_field(data, "amp", f"{path}.data", errors)
+        if item_version >= 1 or "mappingVersion" in data:
+            _require_non_negative_integer_field(
+                data, "mappingVersion", f"{path}.data", errors
+            )
     elif item_id == "snd":
         _require_string_field(data, "sound", f"{path}.data", errors)
         _require_number_field(data, "pitch", f"{path}.data", errors)
         _require_number_field(data, "vol", f"{path}.data", errors)
+        if item_version >= 1 or "mappingVersion" in data:
+            _require_non_negative_integer_field(
+                data, "mappingVersion", f"{path}.data", errors
+            )
         if "variant" in data and not isinstance(data["variant"], str):
             _issue(errors, f"{path}.data.variant", "must be a string")
     elif item_id == "g_val":
@@ -238,6 +279,10 @@ def _validate_item(
             )
     elif item_id == "part":
         _require_string_field(data, "particle", f"{path}.data", errors)
+        if item_version >= 1 or "mappingVersion" in data:
+            _require_non_negative_integer_field(
+                data, "mappingVersion", f"{path}.data", errors
+            )
         cluster = _require_object(data.get("cluster"), f"{path}.data.cluster", errors)
         if cluster is not None:
             for field in ("amount", "horizontal", "vertical"):
