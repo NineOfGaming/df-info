@@ -149,6 +149,30 @@ Defaults must match the selected type and have historically not been available f
 When `isBlock` is true, pitch and yaw are hidden.  
 `isBlock` exists for legacy support.
 
+## Relative location (legacy)
+
+```ts
+{
+  version: 0;
+  id: "r_loc";
+  data: {
+    target: string;
+    forward: number;
+    up: number;
+    right: number;
+    rot_down: number;
+    rot_right: number;
+  };
+}
+```
+
+`r_loc` represents position and rotation offsets relative to a target.  
+`target` uses a display-style target name such as `Default Player`.  
+The positional fields store forward, upward, and rightward offsets; `rot_down` and `rot_right` store rotation offsets.
+
+Relative locations cannot currently be obtained through the in-game interface.  
+The item type remains in the internal format for legacy compatibility.
+
 ## Vector
 
 ```ts

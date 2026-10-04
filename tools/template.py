@@ -43,6 +43,7 @@ KNOWN_ITEMS = {
     "hint",
     "item",
     "loc",
+    "r_loc",
     "num",
     "part",
     "pn_el",
@@ -55,6 +56,7 @@ KNOWN_ITEMS = {
 CURRENT_ITEM_VERSIONS = {item_id: 0 for item_id in KNOWN_ITEMS}
 CURRENT_ITEM_VERSIONS.update({"part": 1, "pot": 1, "snd": 1})
 LEGACY_ITEMS = {"Bitem", "Bloc"}
+LEGACY_KNOWN_ITEMS = {"r_loc"}
 VARIABLE_SCOPES = {"saved", "unsaved", "local", "line"}
 TARGETS = {
     "",
@@ -206,6 +208,8 @@ def _validate_item(
     if item_id not in KNOWN_ITEMS:
         _issue(warnings, f"{path}.id", f"unknown item type {item_id!r}")
         return
+    if item_id in LEGACY_KNOWN_ITEMS:
+        _issue(warnings, f"{path}.id", f"uses legacy item type {item_id!r}")
 
     # Items without an explicit version use the original version 0 format.
     item_version = item_object.get("version", 0)
@@ -247,6 +251,10 @@ def _validate_item(
         if location is not None:
             for field in ("x", "y", "z", "pitch", "yaw"):
                 _require_number_field(location, field, f"{path}.data.loc", errors)
+    elif item_id == "r_loc":
+        _require_string_field(data, "target", f"{path}.data", errors)
+        for field in ("forward", "up", "right", "rot_down", "rot_right"):
+            _require_number_field(data, field, f"{path}.data", errors)
     elif item_id == "vec":
         for field in ("x", "y", "z"):
             _require_number_field(data, field, f"{path}.data", errors)
