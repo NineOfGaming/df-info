@@ -20,10 +20,11 @@ Array order is not significant.
 
 ## Item
 
-Each item contains a type identifier and type-specific data:
+Each item contains its format version, a type identifier, and type-specific data:
 
 ```ts
 {
+  version: number;
   id:
     | "bl_tag"
     | "bucket_var"
@@ -44,6 +45,11 @@ Each item contains a type identifier and type-specific data:
 }
 ```
 
+The version is specific to the item type rather than to the template as a whole.  
+Currently, sounds, potions, and particles use version `1`; the other documented item types use version `0`.  
+New versions can change the meaning or structure of one item type without changing the others.  
+The actiondump's [`versions` object](../actiondump/actiondump.md#versions) records the current version of each type.
+
 Some older templates may use legacy identifiers such as `Bitem` and `Bloc`.
 
 ## Named values
@@ -53,6 +59,7 @@ Numbers use a string because they can include percent expressions.
 
 ```ts
 {
+  version: 0;
   id: "num" | "txt" | "comp";
   data: {
     name: string;
@@ -70,6 +77,7 @@ Its `name` is formatted using [MiniMessage](https://docs.papermc.io/adventure/mi
 
 ```ts
 {
+  version: 0;
   id: "var";
   data: {
     name: string;
@@ -87,6 +95,7 @@ Each entry corresponds to a parameter shown in an action's chest.
 
 ```ts
 {
+  version: 0;
   id: "pn_el";
   data: {
     name: string;
@@ -121,6 +130,7 @@ Defaults must match the selected type and have historically not been available f
 
 ```ts
 {
+  version: 0;
   id: "loc";
   data: {
     isBlock: boolean;
@@ -142,6 +152,7 @@ When `isBlock` is true, pitch and yaw are hidden.
 
 ```ts
 {
+  version: 0;
   id: "vec";
   data: {
     x: number;
@@ -155,14 +166,19 @@ When `isBlock` is true, pitch and yaw are hidden.
 
 ```ts
 {
+  version: 1;
   id: "pot";
   data: {
+    mappingVersion: number;
     pot: string;
     dur: number;
     amp: number;
   };
 }
 ```
+
+In version `1`, `pot` is the namespaced Minecraft potion ID, such as `minecraft:speed`.  
+Version `0` potion items used DiamondFire's display name instead.
 
 `dur` is measured in ticks.  
 `amp` is the effect strength and is normally limited to the range -255 through 255.  
@@ -172,8 +188,10 @@ Durations of `1,000,000` ticks or greater are displayed in-game as `Infinite`.
 
 ```ts
 {
+  version: 1;
   id: "snd";
   data: {
+    mappingVersion: number;
     sound: string;
     pitch: number;
     vol: number;
@@ -181,6 +199,9 @@ Durations of `1,000,000` ticks or greater are displayed in-game as `Infinite`.
   };
 }
 ```
+
+In version `1`, `sound` is the namespaced Minecraft sound ID, such as `minecraft:block.note_block.pling`.  
+Version `0` sound items used DiamondFire's display name instead.
 
 `pitch` is normally in the range 0 through 2.  
 During playback, Minecraft treats values below 0.5 as 0.5, so lower values do not reduce the pitch further.
@@ -191,6 +212,7 @@ When a specific sound variant is selected, `variant` contains its ID from the ac
 
 ```ts
 {
+  version: 0;
   id: "g_val";
   data: {
     type: string;
@@ -215,8 +237,10 @@ Particle types expose different optional fields inside `data.data`:
 
 ```ts
 {
+  version: 1;
   id: "part";
   data: {
+    mappingVersion: number;
     particle: string;
     cluster: {
       amount: number;
@@ -238,12 +262,19 @@ Particle types expose different optional fields inside `data.data`:
 }
 ```
 
+In version `1`, `particle` is the namespaced Minecraft particle ID, such as `minecraft:cloud`.  
+Version `0` particle items used DiamondFire's display name instead.
+
+For sounds, potions, and particles, `mappingVersion` identifies the Minecraft-ID mapping used when the item was created.  
+DiamondFire can use it to migrate IDs that Minecraft renames; the actiondump publishes the current [`sound_mapping`, `potion_mapping`, and `particle_mapping`](../actiondump/actiondump.md#versions) values.
+
 `rgb` is a base-10 integer representation of a hexadecimal RGB color.
 
 ## Minecraft item
 
 ```ts
 {
+  version: 0;
   id: "item";
   data: {
     item: string;
@@ -259,6 +290,7 @@ Block tags occupy slots at the bottom right side of an action chest:
 
 ```ts
 {
+  version: 0;
   id: "bl_tag";
   data: {
     option: string;
@@ -285,6 +317,7 @@ Block tags occupy slots at the bottom right side of an action chest:
       | "set_var"
       | "start_process";
     variable?: {
+      version: 0;
       id: "var";
       data: {
         name: string;
@@ -308,6 +341,7 @@ Bucket-variable items identify an individual variable inside a bucket and namesp
 
 ```ts
 {
+  version: 0;
   id: "bucket_var";
   data: {
     name: string;
@@ -327,6 +361,7 @@ Bucket-variable items identify an individual variable inside a bucket and namesp
 
 ```ts
 {
+  version: 0;
   id: "hint";
   data: {
     id: "function";
