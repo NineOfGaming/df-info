@@ -46,6 +46,7 @@ Each item contains its format version, a type identifier, and type-specific data
 ```
 
 The version is specific to the item type rather than to the template as a whole.  
+When `version` is omitted, DiamondFire treats the item as version `0`.  
 Currently, sounds, potions, and particles use version `1`; the other documented item types use version `0`.  
 New versions can change the meaning or structure of one item type without changing the others.  
 The actiondump's [`versions` object](../actiondump/actiondump.md#versions) records the current version of each type.
