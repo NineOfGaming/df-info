@@ -52,6 +52,12 @@ The placed call block can remember the parameter signature of the first function
 All functions reachable from one dynamic Call Function block should therefore use compatible parameters.  
 If their signatures differ, use separate call blocks or a wrapper function with one stable interface.
 
+## Raycast result rotation
+
+The location returned by `Set Variable: Raycast from Location` includes a rotation as well as a position.  
+If the ray hits something, this rotation represents the normal vector of the face that was hit, rather than the ray's original direction.  
+If the ray does not hit anything, the returned location keeps the ray origin's rotation.
+
 ## Indirect event-state reads across waits
 
 Dedicated Event Values and event-specific conditions are not affected by this quirk.  
