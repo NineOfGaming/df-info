@@ -41,6 +41,28 @@ Each mod provides its own command or workflow for creating the export.
 
 The actiondump files in this repository were exported using Flint.
 
+## Top-level data
+
+An actiondump is an object containing these arrays:
+
+| Collection | Contents |
+| --- | --- |
+| `versions` | See [Versions](#versions) for more details |
+| `codeblocks` | Codeblock display names, template identifiers, and [icons](icons.md) |
+| `actions` | [Actions](actions.md), tags, aliases, argument metadata, and return metadata |
+| `gameValueCategories` | Game-value category identifiers, menu slots, and icons |
+| `gameValues` | Game-value aliases, categories, icons, and return metadata |
+| `particleCategories` | Particle category identifiers, menu slots, and icons |
+| `particles` | Particle names, IDs, categories, editable fields, and icons |
+| `soundCategories` | Sound category identifiers, subcategory flags, and icons |
+| `sounds` | Sound names, IDs, variants, and icons |
+| `potions` | Potion names, IDs, and icons |
+| `cosmetics` | Cosmetic IDs, names, categories, and icons |
+| `shops` | Shop layouts and purchasable-item metadata |
+
+See [Codeblocks](codeblocks.md) for the mapping represented by the `codeblocks` collection.
+
+
 ## Versions
 
 The `versions` object describes the DiamondFire patch, the current code-item versions, and the current Minecraft-ID mappings:
@@ -71,27 +93,9 @@ The `versions` object describes the DiamondFire patch, the current code-item ver
 ```
 
 - `patch` is the DiamondFire patch associated with the dump.
-- `particle_mapping`, `potion_mapping`, and `sound_mapping` identify the current mappings for Minecraft IDs. Code items store the applicable value in their `data.mappingVersion` field so renamed IDs can be migrated.
-- The remaining keys are code-item IDs. Their values are the current format version for that item type. See [Items and arguments](../templates/items.md#item) for the serialized item format.
+- `particle_mapping`, `potion_mapping`, and `sound_mapping` identify the current mappings for Minecraft IDs.  
+Code items store the applicable value in their `data.mappingVersion` field so renamed IDs can be migrated.
+- The remaining keys are code-item IDs. Their values are the current format version for that item type.  
+See [Items and arguments](../templates/items.md#item) for the serialized item format.
 
 In the current format, `part`, `snd`, and `pot` are version `1`; the other listed item types are version `0`.
-
-## Top-level data
-
-Besides `versions`, an actiondump contains these arrays:
-
-| Collection | Contents |
-| --- | --- |
-| `codeblocks` | Codeblock display names, template identifiers, and [icons](icons.md) |
-| `actions` | [Actions](actions.md), tags, aliases, argument metadata, and return metadata |
-| `gameValueCategories` | Game-value category identifiers, menu slots, and icons |
-| `gameValues` | Game-value aliases, categories, icons, and return metadata |
-| `particleCategories` | Particle category identifiers, menu slots, and icons |
-| `particles` | Particle names, IDs, categories, editable fields, and icons |
-| `soundCategories` | Sound category identifiers, subcategory flags, and icons |
-| `sounds` | Sound names, IDs, variants, and icons |
-| `potions` | Potion names, IDs, and icons |
-| `cosmetics` | Cosmetic IDs, names, categories, and icons |
-| `shops` | Shop layouts and purchasable-item metadata |
-
-See [Codeblocks](codeblocks.md) for the mapping represented by the `codeblocks` collection.
