@@ -5,15 +5,26 @@
 | Scope | Visible to | Lasts until |
 | --- | --- | --- |
 | Line | The current code line or function invocation | The line or invocation ends |
-| Local | The current thread and functions it calls | The thread ends |
+| Local | The thread's entire function call chain, plus processes sharing its Local variables | The last thread using their storage ends |
 | Game | Every thread on the plot | Everyone leaves the plot |
 | Save | Every thread on the plot | The variable is deleted |
 
 Choose the narrowest useful scope that covers where and how long the value is needed.
 
+Local variables are shared in both directions between a function and its caller.  
+A function can read the caller's Local variables, and Local variables created or changed inside the function are available to the caller after the function returns.  
+Nested function calls use the same Local variable storage.
+
+For example, if a function sets the Local variable `result` to `42`, the caller can read `result` as `42` after calling that function.  
+The variable remains available for the rest of the thread.
+
 When passing values between functions or processes, passing Line variables as parameters is usually better than using Local variables.
 
-See [Functions and processes](code-practices-and-quirks.md#functions-and-processes) for Local-variable inheritance when starting a process.
+A process starts a separate thread.  
+The Start Process block's `Local Variables` tag controls whether it starts with fresh storage (`Don't copy`, the default), a snapshot of the caller's Local variables (`Copy`), or the same storage as the caller (`Share`).  
+With `Share`, Local variables created or changed by either thread are visible to the other.
+
+See [Functions and processes](code-practices-and-quirks.md#functions-and-processes) for details about these process settings.
 
 ## Purge temporary player state
 
@@ -50,7 +61,7 @@ Use an intermediate variable when it makes a complicated expression easier to in
 Avoiding an extra Set Variable block also avoids parsing and executing that block and its arguments, slightly reducing CPU overhead.  
 The difference is usually minimal, so readability should remain the deciding factor.
 
-See [Percent expressions ](percent-expressions.md) for syntax, built-in expressions, target codes, and nesting.
+See [Percent expressions](percent-expressions.md) for syntax, built-in expressions, target codes, and nesting.
 
 ## Number precision
 

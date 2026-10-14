@@ -13,6 +13,7 @@ A useful test is whether a future change can be made in one obvious place withou
 ## Functions and processes
 
 A function pauses its caller, runs on the same thread, and returns when it finishes.  
+The function and its caller use the same Local variable storage: each can read variables created or changed by the other, including variables created inside nested function calls.  
 A process starts separate execution while the original line continues.
 
 Use a function when:
@@ -27,11 +28,18 @@ Use a process when:
 - waits should not pause the original line;
 - the new thread needs different selection or Local-variable behavior.
 
-Start Process can omit, copy, or share the caller's Local variables.  
+The Start Process block's `Local Variables` tag controls how the new thread receives Local variables:
+
+| Setting | Behavior |
+| --- | --- |
+| `Don't copy` (default) | Starts with fresh Local variable storage. Neither thread can access the other's Local variables. |
+| `Copy` | Starts with an independent snapshot of the caller's Local variables. Later changes in either thread do not affect the other. |
+| `Share` | Uses the same Local variable storage as the caller. Variables created or changed by either thread are visible to both. |
+
 Its [target mode](selections.md#start-process-target-modes) separately controls how the new thread receives selections and event targets.
 
-Copying Local variables creates an independent snapshot.  
-Sharing them allows changes in the process to affect the caller's Local variables, which is powerful but can make concurrent code difficult to reason about.
+With `Share`, the caller can continue before the process sets a variable.  
+Coordinate access when the order of reads and writes matters.
 
 ## Sticky multi-type parameters
 
