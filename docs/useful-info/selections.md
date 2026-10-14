@@ -22,8 +22,8 @@ Player, Entity, and related condition blocks can bypass the selection when their
 
 | Block | Default selection | Non-empty explicit selection | Empty selection | Selectionless thread |
 | --- | --- | --- | --- | --- |
-| Player Action / Entity Action | Runs once for the Default target | Runs once for every selected target | Does not run | Does not run |
-| Set Variable | Runs once | Runs once for every selected target | Does not run | Runs once |
+| Player Action / Entity Action | Runs once for the Default target | Runs once for each selected target | Does not run | Does not run |
+| Set Variable | Runs once | Runs once for each selected target | Does not run | Runs once |
 | If Player / If Entity | Tests the Default target | Tests all selected targets and passes if at least one matches | Does not pass | Does not pass |
 | Select Object | Creates a selection | Replaces, changes, or resets the selection | Replaces, changes, or resets the selection | Creates a selection |
 | Call Function | Runs once and passes on the default selection | Runs once and passes on the selection | Runs once and passes on the empty selection | Runs once and passes on the selectionless state |
