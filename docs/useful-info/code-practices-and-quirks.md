@@ -46,7 +46,7 @@ Coordinate access when the order of reads and writes matters.
 Some action parameters accept more than one value type.  
 The first type used by a particular placed codeblock during a plot session can become fixed for that block, causing later executions with another accepted type to fail until the plot restarts.
 
-The same kind of per-block state also appears to affect invalid parameters, even when an action accepts only one type.  
+The same kind of per-block state also appears to affect invalid parameters in a few cases, even when an action accepts only one type.  
 This can happen when the supplied value has the wrong type such as expecting an item but getting a number, and in some cases, when a value refers to something that does not exist, such as setting an item's material to a material that does not exist in Minecraft.  
 The exact rules for invalid parameters are even less well understood than the regular multi-type behavior, so validate both types and referenced values rather than relying on consistent failure behavior.
 
