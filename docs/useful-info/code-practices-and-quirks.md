@@ -102,7 +102,7 @@ The three forms below should not be treated as interchangeable:
 - `Control: Wait` with an explicit duration of `1`.
 
 `Control: Wait` documents `1` as the default duration, but an omitted duration has been observed to behave slightly differently from an explicit `1`.  
-When the exact execution phase matters, supply the intended duration explicitly and test the surrounding state reads rather than relying on the displayed default.
+This difference *may* simply stem from the overhead of parsing the additional argument.
 
 ## Player death and respawn quirks
 
