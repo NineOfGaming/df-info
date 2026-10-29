@@ -3,6 +3,14 @@
 This repository collects reference information and exported metadata for
 [DiamondFire](https://mcdiamondfire.com/).
 
+> [!IMPORTANT]
+> **This branch archives DiamondFire 8.14 and is not the current documentation.**  
+> Use the repository's [default branch](https://github.com/NineOfGaming/df-info) for information about the current DiamondFire patch.
+>
+> This branch preserves the information recorded while 8.14 was current.  
+> Newly discovered or previously undocumented details are not added retroactively, even when they describe behavior that already existed in 8.14.  
+> Changes introduced in later DiamondFire patches are likewise not added here.
+
 ## Repository contents
 
 - [`actiondump/`](actiondump/) contains the DiamondFire actiondump as JSON.  
